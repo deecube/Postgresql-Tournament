@@ -64,7 +64,9 @@ After the first round, there will be a group of 8 players with a score of 1 (win
 After round 2, there will be three scoring groups:
 
 4 players who have won both games and have 2 points
+
 8 players who have won a game and lost a game and have 1 point
+
 4 players who have lost both games and have no points.
 
 Again, for round 3, players are paired with players in their scoring group. After the third round, the typical scoring groups will be:
