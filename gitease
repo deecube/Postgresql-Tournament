@@ -1,0 +1,79 @@
+#!/bin/bash
+
+usage(){
+cat<<EOF
+Usage: $(basename $0) OPTIONS
+where OPTIONS:
+-s) show status
+-a) add file/files provided as a parameter (-a A for adding all files)
+-m) commit with message provided as parameter
+-p) push
+EOF
+exit 1
+}
+
+
+if [ $# -lt 1 ]
+then
+	echo "Not enough arguments"
+	usage
+fi
+
+git_status(){
+
+echo "Please make sure that you are connected to the internet "
+echo "Displaying the current status of the repo "
+git status
+}
+
+git_add(){
+
+echo -n "Adding all changes to the commit" 
+git add $OPTARG
+
+if [ $? == 0 ]
+	then
+		echo "Added all changes successfully"
+	else
+		echo "Failed to add changes to commit"
+		exit 1
+	fi
+}
+
+git_commit(){
+
+echo "Commiting changes with the message \"$OPTARG\""
+git commit -m "$OPTARG"
+if [ $? == 0 ]
+	then
+		echo "Added successfully"
+	else
+		echo "Failed"
+		exit 1
+	fi
+}
+
+git_push(){
+
+echo "Pushing to $OPTARG"
+git push origin $OPTARG
+if [ $? == 0 ]
+then 
+	echo "Successfully pushed to $OPTARG"
+else
+	echo "Try Again"
+fi
+}
+
+
+while getopts :sa:m:p: opt
+do
+case "$opt" in
+	s)git_status;;
+	a)git_add;;
+	m)git_commit;;
+	p)git_push;;
+	*)usage;;
+esac
+done
+
