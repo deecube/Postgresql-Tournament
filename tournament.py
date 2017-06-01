@@ -19,7 +19,6 @@ def deleteMatches():
         dbconn = connect()
         cur = dbconn.cursor()
         cur.execute("delete from match_info")
-        cur.execute("update player_info set wins=0,matches=0,losses=0;")
         dbconn.commit()
         dbconn.close()
     except:
@@ -86,9 +85,12 @@ def playerStandings():
     try:
         dbconn = connect()
         cur = dbconn.cursor()
-        cur.execute(
-            "select id,name,wins,matches from player_info order by wins desc;")
+        cur.execute("select n.id, n.name, w.wins, n.matches from noofmatches n join winners w on w.id = n.id order by wins desc")
         standings = cur.fetchall()
+        length=len(standings)
+        if (length == 0):
+            cur.execute("select p.id, p.name, count(m.winner) as wins, count(m.winner) as matches from player_info p left join match_info m on p.id=m.winner group by p.id;")
+            standings = cur.fetchall()
         dbconn.close()
         return standings
     except:
@@ -107,10 +109,6 @@ def reportMatch(winner, loser):
         c = conn.cursor()
         c.execute("INSERT INTO match_info (winner, loser) VALUES(%s, %s)",
                   (winner, loser))
-        c.execute("UPDATE player_info SET matches=matches+1, wins=wins+1 \
-                   WHERE id = %(id_place)s", {'id_place': winner})
-        c.execute("UPDATE player_info SET matches=matches+1 \
-                   WHERE id = %(place)s", {'place': loser})
         conn.commit()
         conn.close()
     except:
