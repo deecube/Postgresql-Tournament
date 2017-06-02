@@ -10,10 +10,7 @@ CREATE DATABASE tournament;
 
 create table player_info (
 	id serial primary key, 
-	name text, 
-	wins integer default 0, 
-	losses integer default 0, 
-	matches integer default 0
+	name text
 	);
 
 
