@@ -87,7 +87,7 @@ def playerStandings():
         cur = dbconn.cursor()
         cur.execute("SELECT * FROM standings")
         player_standings = cur.fetchall()
-        length=len(standings)
+        length=len(player_standings)
         if (length == 0):
             cur.execute("SELECT p.id, p.name, COUNT(m.winner) AS wins, COUNT(m.winner) AS matches FROM player_info p LEFT JOIN match_info m ON p.id=m.winner GROUP BY p.id;")
             player_standings = cur.fetchall()
