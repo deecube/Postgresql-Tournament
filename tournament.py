@@ -140,7 +140,7 @@ def swissPairings():
                      standing[i+1][0], standing[i+1][1])
                 pairs.append(tuple(l))
             return pairs
-        else
+        else:
             print "Need even no of players in tournament for swiss pairs"
     except:
         print "Encountered an error"
