@@ -8,7 +8,7 @@ import psycopg2
 def connect():
     """Connect to the PostgreSQL database.  Returns a database connection."""
     try:
-        return psycopg2.connect("dbname=tournament")
+        return psycopg2.connect("dbname = tournament")
     except:
         print "Could not connect to the db"
 
@@ -18,7 +18,7 @@ def deleteMatches():
     try:
         dbconn = connect()
         cur = dbconn.cursor()
-        cur.execute("delete from match_info")
+        cur.execute("DELETE FROM match_info")
         dbconn.commit()
         dbconn.close()
     except:
@@ -30,7 +30,7 @@ def deletePlayers():
     try:
         dbconn = connect()
         cur = dbconn.cursor()
-        cur.execute("delete from player_info")
+        cur.execute("DELETE FROM player_info")
         dbconn.commit()
         dbconn.close()
     except:
@@ -43,7 +43,7 @@ def countPlayers():
     try:
         dbconn = connect()
         cur = dbconn.cursor()
-        cur.execute("select count(id) as num from player_info")
+        cur.execute("SELECT COUNT(id) AS num FROM player_info")
         count = cur.fetchall()
         dbconn.close()
         return count[0][0]
@@ -61,7 +61,7 @@ def registerPlayer(name):
     try:
         dbconn = connect()
         cur = dbconn.cursor()
-        cur.execute("insert into player_info (name) values(%s)", (name,))
+        cur.execute("INSERT INTO player_info (name) VALUES(%s)", (name,))
         dbconn.commit()
         dbconn.close()
     except:
@@ -85,14 +85,14 @@ def playerStandings():
     try:
         dbconn = connect()
         cur = dbconn.cursor()
-        cur.execute("select n.id, n.name, w.wins, n.matches from noofmatches n join winners w on w.id = n.id order by wins desc")
-        standings = cur.fetchall()
+        cur.execute("SELECT * FROM standings")
+        player_standings = cur.fetchall()
         length=len(standings)
         if (length == 0):
-            cur.execute("select p.id, p.name, count(m.winner) as wins, count(m.winner) as matches from player_info p left join match_info m on p.id=m.winner group by p.id;")
-            standings = cur.fetchall()
+            cur.execute("SELECT p.id, p.name, COUNT(m.winner) AS wins, COUNT(m.winner) AS matches FROM player_info p LEFT JOIN match_info m ON p.id=m.winner GROUP BY p.id;")
+            player_standings = cur.fetchall()
         dbconn.close()
-        return standings
+        return player_standings
     except:
         print "Could not get standings"
 
@@ -133,10 +133,14 @@ def swissPairings():
     try:
         pairs = []
         standing = playerStandings()
-        for i in range(0, len(standing), 2):
-            l = (standing[i][0], standing[i][1],
-                 standing[i+1][0], standing[i+1][1])
-            pairs.append(tuple(l))
-        return pairs
+        length = len(standing)
+        if (length % 2 == 0 ):
+            for i in range(0, len(standing), 2):
+                l = (standing[i][0], standing[i][1],
+                     standing[i+1][0], standing[i+1][1])
+                pairs.append(tuple(l))
+            return pairs
+        else
+            print "Need even no of players in tournament for swiss pairs"
     except:
         print "Encountered an error"
